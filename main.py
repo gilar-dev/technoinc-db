@@ -3,11 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 
-# Set mongodb database url
-DB_URL: str = "mongodb+srv://TechnoIncDatabase:TechnoBase53261@technoinccluster.tvawecx.mongodb.net/?appName=TechnoIncCluster"
-
 # Initialize server
 app: FastAPI = FastAPI()
+
+DB_URL: str = "mongodb+srv://TechnoIncDatabase:TechnoBase53261@technoinccluster.tvawecx.mongodb.net/?appName=TechnoIncCluster"
 client: MongoClient = MongoClient(DB_URL, server_api=ServerApi("1"))
 
 # Define the allowed fetch origins
@@ -106,5 +105,5 @@ def get_organizations():
     
     except Exception as e:
         return {
-            "error": e
+            "error": str(e)
         }
