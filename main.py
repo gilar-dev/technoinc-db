@@ -3,23 +3,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 
+# Import from locals
+from config import configuration as config
+
 # Initialize server
 app = FastAPI()
-
-DB_URL = "mongodb+srv://TechnoIncDatabase:TechnoBase53261@technoinccluster.tvawecx.mongodb.net/?appName=TechnoIncCluster"
-client = MongoClient(DB_URL, server_api=ServerApi("1"))
-
-# Define the allowed fetch origins
-origins = [
-    "https://technoinc.world",
-    "https://technoinc.netlify.app",
-    "http://localhost:5173"
-]
+client = MongoClient(config.DB_URL, server_api=ServerApi("1"))
 
 # Add middleware configurations
 app.add_middleware(
     CORSMiddleware,
-    allow_origins = origins,
+    allow_origins = config.origins,
     allow_credentials = True,
     allow_methods = ["*"],
     allow_headers = ["*"]
@@ -28,16 +22,10 @@ app.add_middleware(
 # Initialize database
 db = client["technoinc_db"]
 
-# Initialize database collections
-civilizations = db["civilizations"]
-organizations = db["organizations"]
-
-
+# Entry url
 @app.get("/")
 def entry():
     try:
-        client.admin.command("ping")
-
         return {
             "status": "Success",
             "message": "Welcome to the official API of TechnoInc World!",
@@ -53,10 +41,22 @@ def entry():
     
     except Exception as e:
         return {
-                "status": "Error",
-                "message": str(e)
-            }
+            "status": "Error",
+            "message": str(e)
+        }
+    
+@app.get("/api/v1/categories")
+def get_categories():
+    try:
+        category_list = db["categories"].distinct("categoryList")
 
+        return {
+            "status": "Success",
+            "categoryList": category_list
+        }
+    
+    except Exception as e:
+        return { "status": "Error", "message": str(e) }
 
 @app.get("/api/v1/collections")
 def get_collections():
@@ -69,11 +69,7 @@ def get_collections():
         }
     
     except Exception as e:
-        return {
-            "status": "Failed",
-            "message": str(e)
-        }
-
+        return { "status": "Failed", "message": str(e) }
 
 @app.get("/api/v1/admin-contribution")
 def get_contribution_key():
@@ -85,29 +81,4 @@ def get_contribution_key():
         }
     
     except Exception as e:
-        return {
-            "status": "Failed",
-            "message": str(e)
-        }
-    
-
-@app.get("/api/v1/organizations")
-def get_organizations():
-    try:
-        raw_data = civilizations.find()
-        clean_list = []
-
-        for document in raw_data:
-            document["_id"] = str(document["_id"])
-            clean_list.append(document)
-
-        return {
-            "status": "Success",
-            "totalRecords": len(clean_list),
-            "data": clean_list 
-        }
-    
-    except Exception as e:
-        return {
-            "error": str(e)
-        }
+        return { "status": "Failed", "message": str(e) }    
