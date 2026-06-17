@@ -41,7 +41,7 @@ def entry():
         return {
             "status": "Success",
             "message": "Welcome to the official API of TechnoInc World!",
-            "category_list": [
+            "categoryList": [
                 "Civilizations",
                 "Characters",
                 "Ideologies",
@@ -69,7 +69,10 @@ def get_collections():
         }
     
     except Exception as e:
-        pass
+        return {
+            "status": "Failed",
+            "message": str(e)
+        }
 
 
 @app.get("/api/v1/admin-contribution")
