@@ -4,13 +4,13 @@ from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 
 # Initialize server
-app: FastAPI = FastAPI()
+app = FastAPI()
 
-DB_URL: str = "mongodb+srv://TechnoIncDatabase:TechnoBase53261@technoinccluster.tvawecx.mongodb.net/?appName=TechnoIncCluster"
-client: MongoClient = MongoClient(DB_URL, server_api=ServerApi("1"))
+DB_URL = "mongodb+srv://TechnoIncDatabase:TechnoBase53261@technoinccluster.tvawecx.mongodb.net/?appName=TechnoIncCluster"
+client = MongoClient(DB_URL, server_api=ServerApi("1"))
 
 # Define the allowed fetch origins
-origins: list = [
+origins = [
     "https://technoinc.world",
     "https://technoinc.netlify.app",
     "http://localhost:5173"
@@ -37,7 +37,7 @@ organizations = db["organizations"]
 def entry():
     try:
         client.admin.command("ping")
-        print("Pinged your deployment. You successfully connected to MongoDB!")
+
         return {
             "status": "Success",
             "message": "Welcome to the official API of TechnoInc World!",
@@ -67,11 +67,12 @@ def get_collections():
             "status": "Success",
             "collections": collections_list
         }
+    
     except Exception as e:
         pass
 
 
-@app.get("/admin-contribution")
+@app.get("/api/v1/admin-contribution")
 def get_contribution_key():
     try:
         key = db["admin-contribution"].distinct("key")
