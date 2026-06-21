@@ -2,9 +2,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
+from pydantic import BaseModel
+from typing import List, Dict, Any, Optional
 
 # Import from locals
-from config import configuration as config
+from configuration import config
 
 # Initialize server
 app = FastAPI()
@@ -18,6 +20,13 @@ app.add_middleware(
     allow_methods = ["*"],
     allow_headers = ["*"]
 )
+
+class WikiArticlePayload(BaseModel):
+    id: str
+    title: str
+    category: str
+    visited: int = 0
+    wikiContent: List[Dict[str, Any]]
 
 # Initialize database
 db = client["technoinc_db"]
@@ -81,4 +90,29 @@ def get_contribution_key():
         }
     
     except Exception as e:
-        return { "status": "Failed", "message": str(e) }    
+        return { "status": "Failed", "message": str(e) }
+
+@app.post("/api/v1/wiki/upload")
+async def upload_wiki_article(payload: WikiArticlePayload):
+    try:
+        article_data = payload.model_dump()
+        article_id = article_data["id"]
+
+        db["wiki_articles"].update_one(
+            { "id": article_id },
+            { "$set": article_data },
+            upsert=True
+        )
+
+        return {
+            "status": "Success",
+            "message": f"Article '{article_data["title"]}' successfully sent to database!",
+            "id": article_id,
+            "data": str(article_data)
+        }
+
+    except Exception as e:
+        return {
+            "status": "Error",
+            "message": f"For some reason, it's not allowed!, {e}"
+        }  
