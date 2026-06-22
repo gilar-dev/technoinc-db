@@ -1,9 +1,10 @@
 from fastapi import FastAPI
+from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
 # Import from locals
 from configuration import config
@@ -26,7 +27,7 @@ class WikiArticlePayload(BaseModel):
     title: str
     category: str
     visited: int = 0
-    wikiContent: List[Dict[str, Any]]
+    wiki_content: List[Dict[str, Any]]
 
 # Initialize database
 db = client["technoinc_db"]
@@ -38,14 +39,8 @@ def entry():
         return {
             "status": "Success",
             "message": "Welcome to the official API of TechnoInc World!",
-            "categoryList": [
-                "Civilizations",
-                "Characters",
-                "Ideologies",
-                "Organizations",
-                "Parties",
-                "Towns"
-            ]
+            "website": "https://technoinc.world",
+            "description": "Start reading a journey of five years Minecraft survival world!"
         }
     
     except Exception as e:
@@ -114,5 +109,26 @@ async def upload_wiki_article(payload: WikiArticlePayload):
     except Exception as e:
         return {
             "status": "Error",
-            "message": f"For some reason, it's not allowed!, {e}"
-        }  
+            "message": str(e)
+        }
+    
+@app.get("/api/v1/wiki/{article_id}")
+async def check_article_id(article_id: str):
+    try:
+        document = db["wiki_articles"].find_one({ "id": article_id })
+
+        # Check if document with given id is exist or not
+        is_exist = True if document else False
+        
+        if "_id" in document:
+            del document["_id"]
+
+        return {
+            "status": "Success",
+            "is_exist": is_exist
+        }
+    
+    except HTTPException as http_error:
+        return { "status": "Error", "message": str(http_error) }
+    except Exception as e:
+        return { "status": "Error", "mesage": str(e) }
