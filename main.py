@@ -52,11 +52,11 @@ def entry():
 @app.get("/api/v1/categories")
 def get_categories():
     try:
-        category_list = db["categories"].distinct("categoryList")
+        category_list = db["categories"].distinct("category_list")
 
         return {
             "status": "Success",
-            "categoryList": category_list
+            "category_list": category_list
         }
     
     except Exception as e:
