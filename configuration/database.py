@@ -1,4 +1,3 @@
-from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo import MongoClient
 from pymongo.server_api import ServerApi
 from configuration.config import DB_URL
