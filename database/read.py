@@ -1,17 +1,4 @@
 from configuration.database import db
-
-# Entry URL
-def entry():
-    try:
-        return {
-            "status": "Success",
-            "message": "Welcome to the official API of TechnoInc World!",
-            "website": "https://technoinc.world",
-            "description": "Start reading a journey of five years Minecraft survival world!"
-        }
-    
-    except Exception as e:
-        return { "status": "Error", "message": str(e) }
     
 # Get article categories
 def get_article_categories():
@@ -30,7 +17,7 @@ def get_article_categories():
 # check article existence
 def check_article_id(category: str, article_id: str):
     try:
-        collection = "cat-" + category.lower()
+        collection = f"cat-{category.lower()}"
         document = db[collection].find_one({ "id": article_id })
 
         # Check if document with given id is exist or not
@@ -51,7 +38,7 @@ def check_article_id(category: str, article_id: str):
 # Get article list by category
 def get_articles_by_category(category: str):
     try:
-        converted_category = "cat-" + category
+        converted_category = f"cat-{category}"
         collection = db[converted_category]
 
         # Get all articles from a category
@@ -76,7 +63,7 @@ def get_articles_by_category(category: str):
 # Get article wiki by category and id
 def get_article_wiki(category: str, article_id: str):
     try:
-        converted_category = "cat-" + category
+        converted_category = f"cat-{category}"
         document = db[converted_category]
 
         # Find document based on article id

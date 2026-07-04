@@ -7,7 +7,7 @@ def upload_wiki_article(article_data: dict):
         article_category = article_data["category"]
 
         # Convert category name to find the collection
-        collection = "cat-" + article_category.lower()
+        collection = f"cat-{article_category.lower()}"
 
         # Check if collection it's not exist
         collections_list = db.list_collection_names()
