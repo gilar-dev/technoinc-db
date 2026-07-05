@@ -9,6 +9,11 @@ router = APIRouter(prefix="/api/v1/wiki", tags=["Wiki"])
 async def get_article_categories():
     return read.get_article_categories()
 
+# Get all articles of all categories
+@router.get("/articles")
+async def get_all_articles():
+    return read.get_all_articles()
+
 # Upload or create new article
 @router.post("/upload")
 async def upload_wiki_article(payload: model.WikiArticlePayload):

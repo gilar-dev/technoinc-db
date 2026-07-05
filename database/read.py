@@ -13,6 +13,37 @@ def get_article_categories():
     
     except Exception as e:
         return { "status": "Error", "message": str(e) }
+    
+# Get all articles of all categories
+def get_all_articles():
+    try:
+        collections = db.list_collection_names()
+        # Filter only cllection with category
+        categories = [cat for cat in collections if cat.startswith("cat-")]
+        # Empty list for articles data
+        articles = []
+
+        for cat in categories:
+            # Get all articles from category name
+            document = db[cat].find({})
+
+            if document:
+                # Loop through document
+                for doc in document:
+                    # Delete unnecessary property
+                    if "_id" in doc:
+                        del doc["_id"]
+                        del doc["wiki_content"]
+
+                    articles.append(doc)
+
+        return {
+            "status": "Success",
+            "data": articles
+        }
+
+    except Exception as e:
+        return { "status": "Error", "message": str(e) }
 
 # check article existence
 def check_article_id(category: str, article_id: str):
