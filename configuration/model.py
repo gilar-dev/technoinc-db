@@ -8,3 +8,7 @@ class WikiArticlePayload(BaseModel):
     cover: str
     visited: int = 0
     wiki_content: List[Dict[str, Any]]
+
+class WikiArticleUpdate(BaseModel):
+    id: str
+    wiki_content: List[Dict[str, Any]]

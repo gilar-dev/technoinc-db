@@ -1,10 +1,10 @@
 # FastAPI
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 # Locals
 from configuration import config
-from routers import wiki
+from routers import contribution, wiki
 
 # Initialize server
 app = FastAPI()
@@ -19,6 +19,7 @@ app.add_middleware(
 )
 
 # Redirect to specific router
+app.include_router(contribution.router)
 app.include_router(wiki.router)
 
 # Entry url
@@ -37,3 +38,8 @@ async def entry():
     
     except Exception as e:
         return { "status": "Error", "message": str(e) }
+
+# Ignore favicon
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return Response(status_code=204)

@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from configuration import model
 from database import read, create
 
 router = APIRouter(prefix="/api/v1/wiki", tags=["Wiki"])
@@ -13,11 +12,6 @@ async def get_article_categories():
 @router.get("/articles")
 async def get_all_articles():
     return read.get_all_articles()
-
-# Upload or create new article
-@router.post("/upload")
-async def upload_wiki_article(payload: model.WikiArticlePayload):
-    return create.upload_wiki_article(payload.model_dump())
 
 # Get articles list by category
 @router.get("/{category}/articles")
