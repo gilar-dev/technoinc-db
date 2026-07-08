@@ -6,6 +6,7 @@ class WikiArticlePayload(BaseModel):
     title: str
     category: str
     cover: str
+    public_id: str
     visited: int = 0
     wiki_content: List[Dict[str, Any]]
 

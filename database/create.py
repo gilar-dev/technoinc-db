@@ -24,3 +24,7 @@ def upload_wiki_article(article_data: dict):
     
     except Exception as e:
         return { "status": "Error", "message": str(e) }
+    
+# Upload iamge to cloud storage
+def upload_to_cloud(data):
+    pass

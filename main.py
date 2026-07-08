@@ -4,10 +4,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Locals
 from configuration import config
-from routers import contribution, wiki
+from routers import contribution, cloudinary, wiki
 
 # Initialize server
-app = FastAPI()
+app = FastAPI(title="TechnoBackend",)
 
 # Add middleware configurations
 app.add_middleware(
@@ -20,6 +20,7 @@ app.add_middleware(
 
 # Redirect to specific router
 app.include_router(contribution.router)
+app.include_router(cloudinary.router)
 app.include_router(wiki.router)
 
 # Entry url

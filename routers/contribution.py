@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from configuration import model
 from database import create, update
 
-router = APIRouter(prefix="/api/v1/contribution", tags=["Contrribution"])
+router = APIRouter(prefix="/api/v1/contribution", tags=["Contribution"])
 
 # Upload or create new article
 @router.post("/upload")
