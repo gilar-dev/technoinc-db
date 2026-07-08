@@ -7,7 +7,7 @@ from configuration import config
 from routers import contribution, cloudinary, wiki
 
 # Initialize server
-app = FastAPI(title="TechnoBackend",)
+app = FastAPI(title="TechnoBackend")
 
 # Add middleware configurations
 app.add_middleware(

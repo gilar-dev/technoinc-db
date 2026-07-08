@@ -4,4 +4,3 @@ pymongo
 pydantic
 cloudinary
 dotenv
-multipart
