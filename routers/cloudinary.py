@@ -1,14 +1,12 @@
 import os, cloudinary, cloudinary.api, cloudinary.uploader
 from fastapi import APIRouter, UploadFile, File, Form
-from dotenv import load_dotenv
 
 router = APIRouter(prefix="/api/v1/cloudinary", tags=["Cloudinary"])
 
-load_dotenv()
 cloudinary.config(
-    cloud_name=os.environ["CLOUDINARY_CLOUD_NAME"],
-    api_key=os.environ["CLOUDINARY_API_KEY"],
-    api_secret=os.environ["CLOUDINARY_API_SECRET"],
+    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.environ.get("CLOUDINARY_API_KEY"),
+    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
     secure=True
 )
 
