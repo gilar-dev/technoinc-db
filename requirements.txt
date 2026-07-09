@@ -3,4 +3,5 @@ uvicorn
 pymongo
 pydantic
 cloudinary
+dotenv
 python-multipart
