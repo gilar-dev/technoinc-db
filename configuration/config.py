@@ -1,4 +1,9 @@
-DB_URL = "mongodb+srv://TechnoIncDatabase:TechnoBase53261@technoinccluster.tvawecx.mongodb.net/?appName=TechnoIncCluster"
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DB_URI = os.getenv("MONGO_URI")
 
 origins = [
     "https://technoinc.world",

@@ -13,3 +13,6 @@ class WikiArticlePayload(BaseModel):
 class WikiArticleUpdate(BaseModel):
     id: str
     wiki_content: List[Dict[str, Any]]
+
+class ImagePublicId(BaseModel):
+    public_ids: List[str]

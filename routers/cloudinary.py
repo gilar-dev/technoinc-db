@@ -1,14 +1,15 @@
-import os, cloudinary, cloudinary.api, cloudinary.uploader
+import os, asyncio, cloudinary, cloudinary.api, cloudinary.uploader
 from fastapi import APIRouter, UploadFile, File, Form
 from dotenv import load_dotenv
+from configuration.model import ImagePublicId
 
 router = APIRouter(prefix="/api/v1/cloudinary", tags=["Cloudinary"])
 
 load_dotenv()
 cloudinary.config(
-    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.environ.get("CLOUDINARY_API_KEY"),
-    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
     secure=True
 )
 
@@ -42,10 +43,19 @@ async def upload_to_cloud(
     
 # Delete images as article is deleted
 @router.post("/delete")
-async def delete_images(public_ids: list):
+async def delete_images(data: ImagePublicId):
     try:
-        response = cloudinary.api.delete_resources(public_ids, invalidate=True)
-        print(response)
+        public_ids = data.model_dump()["public_ids"]
+        response = await asyncio.to_thread(
+            cloudinary.api.delete_resources,
+            public_ids,
+            invalidate=True
+        )
+
+        return {
+            "status": "Success",
+            "response": response
+        }
 
     except Exception as e:
         return { "status": "Error", "message": str(e) }
