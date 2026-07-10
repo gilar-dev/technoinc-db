@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from database import read, create
+from database import read, delete
 
 router = APIRouter(prefix="/api/v1/wiki", tags=["Wiki"])
 
@@ -27,3 +27,7 @@ async def check_article_id(category: str, article_id: str):
 @router.get("/{category}/{article_id}")
 async def get_article_wiki(category: str, article_id:str):
     return read.get_article_wiki(category, article_id)
+
+@router.delete("/{category}/{article_id}")
+async def delete_article_wiki(category: str, article_id: str):
+    return delete.delete_article_wiki(category, article_id)

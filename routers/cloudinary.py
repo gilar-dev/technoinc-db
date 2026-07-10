@@ -45,16 +45,16 @@ async def upload_to_cloud(
 @router.post("/delete")
 async def delete_images(data: ImagePublicId):
     try:
+        # Get list of public ids
         public_ids = data.model_dump()["public_ids"]
-        response = await asyncio.to_thread(
-            cloudinary.api.delete_resources,
-            public_ids,
-            invalidate=True
-        )
+        
+        # Delete asset by using Upload API destroy method
+        for pid in public_ids:
+            cloudinary.uploader.destroy(pid, invalidate=True)
 
         return {
             "status": "Success",
-            "response": response
+            "message": "Deleted"
         }
 
     except Exception as e:
