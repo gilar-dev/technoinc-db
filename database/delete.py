@@ -1,11 +1,11 @@
 from configuration.database import db
 
 # Delete article from database
-def delete_article_wiki(category: str, article_id: str):
+def delete_article_wiki(data: dict):
     try:
-        collection = f"cat-{category}"
+        collection = f"cat-{data.category}"
         document = db[collection]
-        result = document.delete_one({ "id": article_id })
+        result = document.delete_one({ "id": data.article_id })
 
         return {
             "status": "Success",
