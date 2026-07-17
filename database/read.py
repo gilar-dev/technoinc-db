@@ -98,15 +98,15 @@ def get_article_wiki(category: str, article_id: str):
         document = db[converted_category]
 
         # Find document based on article id
-        results = document.find_one({ "id": article_id })
+        result = document.find_one({ "id": article_id })
 
         # Delete unnecessary property
-        if "_id" in results:
-            del results["_id"]
+        if "_id" in result:
+            del result["_id"]
 
         return {
             "status": "Success",
-            "article": results
+            "article": result
         }
 
     except Exception as e:
