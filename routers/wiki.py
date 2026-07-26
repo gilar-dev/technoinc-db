@@ -14,6 +14,11 @@ async def get_article_categories():
 async def get_all_articles():
     return read.get_all_articles()
 
+# Get article by matches input value
+@router.get("/search/{input}")
+async def search_article(input: str):
+    return read.search_article(input)
+
 # Get article id to add visited value
 @router.put("/view")
 async def initialize_ttl(data: ArticleInit):

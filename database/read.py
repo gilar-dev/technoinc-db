@@ -45,7 +45,36 @@ def get_all_articles():
     except Exception as e:
         return { "status": "Error", "message": str(e) }
 
-# check article existence
+# Get article by input value
+def search_article(input: str):
+    try:
+        collections: list[str] = db.list_collection_names()
+        categories: list[str] = [x for x in collections if x.startswith("cat-")]
+
+        # Empty list to contain matches article from input
+        matches: list[str] = []
+        for cat in categories:
+            # Check articles in all categories
+            document = db[cat]
+            with document.find() as cursor:
+                for doc in cursor:
+                    # Get article title
+                    title: str = doc["title"]
+                    if input.lower() in title.lower():
+                        # Delete unnecessary property
+                        del doc["_id"]
+                        del doc["wiki_content"]
+                        matches.append(doc)
+
+        return {
+            "status": "Success",
+            "matches": matches
+        }
+
+    except Exception as e:
+        return { "status": "Error", "message": str(e) }
+
+# Check article existence
 def check_article_id(category: str, article_id: str):
     try:
         collection = f"cat-{category.lower()}"
