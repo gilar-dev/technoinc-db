@@ -5,6 +5,7 @@ from typing import List, Dict, Any
 class WikiArticlePayload(BaseModel):
     id: str
     title: str
+    description: str
     category: str
     cover: str
     public_id: str
