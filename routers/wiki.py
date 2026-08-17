@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from database import read, update, delete
-from configuration.model import ArticleInit
+from database import create, read, update, delete
+from configuration import model
 
 router = APIRouter(prefix="/api/v1/wiki", tags=["Wiki"])
 
@@ -21,13 +21,23 @@ async def search_article(input: str):
 
 # Get article id to add visited value
 @router.put("/view")
-async def initialize_ttl(data: ArticleInit):
+async def initialize_ttl(data: model.ArticleInit):
     return update.increase_visited(data.model_dump())
 
 # Delete article from database
 @router.delete("/delete")
-async def delete_article_wiki(data: ArticleInit):
+async def delete_article_wiki(data: model.ArticleInit):
     return delete.delete_article_wiki(data.model_dump())
+
+# Create new category
+@router.post("/category/create")
+async def create_category(data: model.WikiCreateCategory):
+    return create.create_category(data.model_dump())
+
+# Get category from input
+@router.get("/category/search/{input}")
+async def get_category(input: str):
+    return read.get_category(input)
 
 # Get articles list by category
 @router.get("/{category}/articles")
@@ -39,7 +49,22 @@ async def get_articles_by_category(category: str):
 async def check_article_id(category: str, article_id: str):
     return read.check_article_id(category, article_id)
 
+# Check article existence
+@router.get("/check/{article_id}")
+async def check_article(article_id: str):
+    return read.check_article(article_id)
+
 # Get article wiki by category and id
-@router.get("/{category}/{article_id}")
-async def get_article_wiki(category: str, article_id:str):
-    return read.get_article_wiki(category, article_id)
+@router.get("/get/{article_id}")
+async def get_article_wiki(article_id:str):
+    return read.get_article_wiki(article_id)
+
+# Get universal id value
+@router.get("/universal_id/get")
+async def get_universal_id():
+    return read.get_universal_id()
+
+# Update universal id by increasing its value
+@router.put("/universal_id/increase")
+async def increase_universal_id():
+    return update.increase_universal_id()

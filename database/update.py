@@ -1,20 +1,20 @@
 from configuration.database import db
 
 # Update article from contribution mode
-def update_article(category: str, article_data: dict):
+def update_article(article_data: dict):
     try:
-        collection = f"cat-{category.lower()}"
-        document = db[collection]
+        # Initializing document
+        document = db["wiki-articles"]
 
         # Update document
         document.update_one(
             { "id": article_data["id"] }, 
-            { "$set": { "wiki_content": article_data["wiki_content"] } }
+            { "$set": article_data }
         )
 
         return {
             "status": "Success",
-            "message": f"Article with id '{article_data["id"]}' is successfully updated"
+            "message": f"Article with title '{article_data["title"]}' is successfully updated"
         }
 
     except Exception as e:
@@ -24,18 +24,42 @@ def update_article(category: str, article_data: dict):
 # Increase article visited value
 def increase_visited(data: dict):
     try:
-        collection = f"cat-{data["category"]}"
-        document = db[collection]
+        # Define article collection
+        collection = db["wiki-articles"]
 
-        # Increase article visited
-        document.update_one(
-            { "id": data["id"] },
-            { "$inc": { "visited": 1 } }
-        )
+        # Find matches article with id
+        with collection.find() as cursor:
+            for document in cursor:
+                print(document)
+                document_id: str = document["id"]
+                if document_id.lower() == data["id"]:
+                    document.update_one({
+                        "$inc": { "visited": 1 }
+                    })
 
         return {
             "status": "Success",
-            "message": f"Article '{data["id"]}' in category '{data["category"]}' visited is successfully increased"
+            "message": f"Article '{data["id"]}' visited is successfully increased"
+        }
+
+    except Exception as e:
+        return { "status": "Error", "message": str(e) }
+
+# Increase universal wiki id
+def increase_universal_id():
+    try:
+        # Initializing document
+        document = db["wiki-configurations"]
+        # Updating universal id
+        document.update_one(
+            { "type": "configurations" },
+            { "$inc": { "universal_id": 1 } }
+        )
+
+        # Return successful updating status
+        return {
+            "status": "Success",
+            "message": "Universal Id is successfully increased"
         }
 
     except Exception as e:

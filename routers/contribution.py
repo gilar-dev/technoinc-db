@@ -10,6 +10,6 @@ async def upload_wiki_article(payload: model.WikiArticlePayload):
     return create.upload_wiki_article(payload.model_dump())
 
 # Update article from contribution models
-@router.put("/update/{category}")
-async def update_article(category: str, article_data: model.WikiArticleUpdate):
-    return update.update_article(category, article_data.model_dump())
+@router.put("/update")
+async def update_article(article_data: model.WikiArticlePayload):
+    return update.update_article(article_data.model_dump())
