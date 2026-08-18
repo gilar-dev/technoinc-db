@@ -49,15 +49,16 @@ async def get_articles_by_category(category: str):
 async def check_article_id(category: str, article_id: str):
     return read.check_article_id(category, article_id)
 
-# Check article existence
-@router.get("/check/{article_id}")
-async def check_article(article_id: str):
-    return read.check_article(article_id)
-
+# === IMPORTANT AND FIXED ===
 # Get article wiki by category and id
 @router.get("/get/{article_id}")
 async def get_article_wiki(article_id:str):
     return read.get_article_wiki(article_id)
+
+# Check article existence
+@router.get("/check/{article_title}")
+async def check_article_title(article_title: str):
+    return read.check_article_title(article_title)
 
 # Get universal id value
 @router.get("/universal_id/get")

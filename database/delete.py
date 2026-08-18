@@ -3,8 +3,7 @@ from configuration.database import db
 # Delete article from database
 def delete_article_wiki(data: dict):
     try:
-        collection = f"cat-{data["category"]}"
-        document = db[collection]
+        document = db["wiki-articles"]
         result = document.delete_one({ "id": data["id"] })
 
         return {

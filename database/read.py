@@ -1,5 +1,4 @@
 from configuration.database import db
-from typing import Any
     
 # Get article categories
 def get_article_categories():
@@ -96,21 +95,6 @@ def check_article_id(category: str, article_id: str):
     except Exception as e:
         return { "status": "Error", "message": str(e) }
 
-# Check article existence
-def check_article(id: str):
-    try:
-        collection = db["wiki-articles"]
-        article = collection.find_one({ "title": id })
-        is_exist = True if article else False
-
-        return {
-            "status": "Success",
-            "is_exist": is_exist
-        }
-
-    except Exception as e:
-        return { "status": "Error", "message": str(e) }
-
 # Get category from input
 def get_category(category: str):
     try:
@@ -168,7 +152,8 @@ def get_articles_by_category(category: str):
 
     except Exception as e:
         return { "status": "Error", "message": str(e) }
-    
+
+# === IMPORTANT AND FIXED ===
 # Get article wiki by category and id
 def get_article_wiki(article_id: str):
     try:
@@ -189,6 +174,27 @@ def get_article_wiki(article_id: str):
                         "status": "Success",
                         "article": document
                     }
+
+    except Exception as e:
+        return { "status": "Error", "message": str(e) }
+
+# Check article existence
+def check_article_title(article_title: str):
+    try:
+        document = db["wiki-articles"]
+        is_exist: bool = False
+
+        with document.find() as cursor:
+            for article in cursor:
+                title: str = article["title"]
+
+                if title.lower().replace(" ", "") == article_title:
+                    is_exist = True
+
+        return {
+            "status": "Success",
+            "is_exist": is_exist
+        }
 
     except Exception as e:
         return { "status": "Error", "message": str(e) }
