@@ -1,4 +1,4 @@
-import os, asyncio, cloudinary, cloudinary.api, cloudinary.uploader
+import os, cloudinary, cloudinary.api, cloudinary.uploader
 from fastapi import APIRouter, UploadFile, File, Form
 from dotenv import load_dotenv
 from configuration.model import ImagePublicId
@@ -46,11 +46,15 @@ async def upload_to_cloud(
 async def delete_images(data: ImagePublicId):
     try:
         # Get list of public ids
-        public_ids = data.model_dump()["public_ids"]
+        loaded_data = data.model_dump()
+        public_ids = loaded_data.get("public_ids")
         
         # Delete asset by using Upload API destroy method
         for pid in public_ids:
             cloudinary.uploader.destroy(pid, invalidate=True)
+
+        # Delete folder in cloudinary
+        cloudinary.api.delete_folder(loaded_data.get("folder_name"))
 
         return {
             "status": "Success",

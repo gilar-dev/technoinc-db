@@ -26,8 +26,9 @@ class WikiCreateCategory(BaseModel):
 
 # Model for getting assets public id
 class ImagePublicId(BaseModel):
+    folder_name: str
     public_ids: List[str]
 
 # Model for initializing delete article
 class ArticleInit(BaseModel):
-    id: str
+    article_id: int

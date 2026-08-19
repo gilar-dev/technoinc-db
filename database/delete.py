@@ -4,7 +4,7 @@ from configuration.database import db
 def delete_article_wiki(data: dict):
     try:
         document = db["wiki-articles"]
-        result = document.delete_one({ "id": data["id"] })
+        result = document.delete_one({ "id": data["article_id"] })
 
         return {
             "status": "Success",
