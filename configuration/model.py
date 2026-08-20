@@ -5,6 +5,7 @@ from typing import List, Dict, Any
 class WikiArticlePayload(BaseModel):
     title: str
     id: int
+    version: int
     description: str
     cover: str
     public_id: str
@@ -28,6 +29,7 @@ class WikiCreateCategory(BaseModel):
 class ImagePublicId(BaseModel):
     folder_name: str
     public_ids: List[str]
+    delete_folder: bool
 
 # Model for initializing delete article
 class ArticleInit(BaseModel):

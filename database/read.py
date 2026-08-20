@@ -155,15 +155,18 @@ def get_articles_by_category(category: str):
 
 # === IMPORTANT AND FIXED ===
 # Get article wiki by category and id
-def get_article_wiki(article_id: str):
+def get_article_wiki(article_id: str, option: str):
     try:
         # Define collection name where article stored
         collection = db["wiki-articles"]
+        print(option)
 
         # Find matches document within collection
         with collection.find() as cursor:
             for document in cursor:
                 # Define document title
+                if option != "":
+                    print(document[option])
                 document_title: str = document["title"]
                 if document_title.lower() == article_id:
                     # Delete unnecessary property
@@ -172,7 +175,7 @@ def get_article_wiki(article_id: str):
                     # Return matches document
                     return {
                         "status": "Success",
-                        "article": document
+                        "article": document if option == "" else document[option]
                     }
 
     except Exception as e:

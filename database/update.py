@@ -6,10 +6,13 @@ def update_article(article_data: dict):
         # Initializing document
         document = db["wiki-articles"]
 
+        if "version" in article_data:
+            del article_data["version"]
+
         # Update document
         document.update_one(
             { "id": article_data["id"] }, 
-            { "$set": article_data }
+            { "$set": article_data, "$inc": { "version": 1 } }
         )
 
         return {

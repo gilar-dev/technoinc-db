@@ -53,8 +53,9 @@ async def delete_images(data: ImagePublicId):
         for pid in public_ids:
             cloudinary.uploader.destroy(pid, invalidate=True)
 
-        # Delete folder in cloudinary
-        cloudinary.api.delete_folder(loaded_data.get("folder_name"))
+        # Delete folder in cloudinary (optional)
+        if loaded_data.get("delete_folder"):
+            cloudinary.api.delete_folder(loaded_data.get("folder_name"))
 
         return {
             "status": "Success",

@@ -52,8 +52,8 @@ async def check_article_id(category: str, article_id: str):
 # === IMPORTANT AND FIXED ===
 # Get article wiki by category and id
 @router.get("/get/{article_id}")
-async def get_article_wiki(article_id:str):
-    return read.get_article_wiki(article_id)
+async def get_article_wiki(article_id:str, option: str = ""):
+    return read.get_article_wiki(article_id, option)
 
 # Check article existence
 @router.get("/check/{article_title}")
