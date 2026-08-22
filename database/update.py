@@ -29,16 +29,13 @@ def increase_visited(data: dict):
     try:
         # Define article collection
         collection = db["wiki-articles"]
+        print(data.get("article_id"))
 
-        # Find matches article with id
-        with collection.find() as cursor:
-            for document in cursor:
-                print(document)
-                document_id: str = document["id"]
-                if document_id.lower() == data["id"]:
-                    document.update_one({
-                        "$inc": { "visited": 1 }
-                    })
+        # Increase article visit
+        collection.update_one(
+            { "id": data.get("article_id") },
+            { "$inc": { "visited": 1 } }
+        )
 
         return {
             "status": "Success",

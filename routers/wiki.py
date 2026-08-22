@@ -19,11 +19,6 @@ async def get_all_articles():
 async def search_article(input: str):
     return read.search_article(input)
 
-# Get article id to add visited value
-@router.put("/view")
-async def initialize_ttl(data: model.ArticleInit):
-    return update.increase_visited(data.model_dump())
-
 # Delete article from database
 @router.delete("/delete")
 async def delete_article_wiki(data: model.ArticleInit):
@@ -59,6 +54,11 @@ async def get_article_wiki(article_id:str, option: str = ""):
 @router.get("/check/{article_title}")
 async def check_article_title(article_title: str):
     return read.check_article_title(article_title)
+
+# Get article id to add visited value
+@router.put("/view")
+async def initialize_ttl(data: model.ArticleInit):
+    return update.increase_visited(data.model_dump())
 
 # Get universal id value
 @router.get("/universal_id/get")

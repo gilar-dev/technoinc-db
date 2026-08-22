@@ -159,7 +159,6 @@ def get_article_wiki(article_id: str, option: str):
     try:
         # Define collection name where article stored
         collection = db["wiki-articles"]
-        print(option)
 
         # Find matches document within collection
         with collection.find() as cursor:
@@ -168,7 +167,8 @@ def get_article_wiki(article_id: str, option: str):
                 if option != "":
                     print(document[option])
                 document_title: str = document["title"]
-                if document_title.lower() == article_id:
+                filtered_title: str = document_title.lower().replace(" ", "")
+                if filtered_title == article_id.lower().replace("_", ""):
                     # Delete unnecessary property
                     if "_id" in document:
                         del document["_id"]
