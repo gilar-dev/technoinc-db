@@ -120,6 +120,9 @@ def get_category(category: str):
                 if category.lower() in sub_category.lower():
                     matches.append({ "category": sub_category, "hierarchy": f"Subcategory of {document["parent"]}" })
 
+        if len(matches) >= 10:
+            matches = matches[:10]
+
         return {
             "status": "Success",
             "data": matches
