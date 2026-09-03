@@ -158,28 +158,25 @@ def get_articles_by_category(category: str):
 
 # === IMPORTANT AND FIXED ===
 # Get article wiki by category and id
-def get_article_wiki(article_id: str, option: str):
+async def get_article_wiki(article_id: str, option: str = ""):
     try:
-        # Define collection name where article stored
         collection = db["wiki-articles"]
+        formatted_id = article_id.replace("_", " ")
+        document = await collection.find_one({
+            "title": { "$regex": f"^{formatted_id}$", "$options": "i" }
+        })
 
-        # Find matches document within collection
-        with collection.find() as cursor:
-            for document in cursor:
-                # Define document title
-                if option != "":
-                    print(document[option])
-                document_title: str = document["title"]
-                filtered_title: str = document_title.lower().replace(" ", "")
-                if filtered_title == article_id.lower().replace("_", ""):
-                    # Delete unnecessary property
-                    if "_id" in document:
-                        del document["_id"]
-                    # Return matches document
-                    return {
-                        "status": "Success",
-                        "article": document if option == "" else document[option]
-                    }
+        if not document:
+            return {
+                "status": "Error",
+                "message": f"Article with id '{article_id}' not found."
+            }
+
+        document.pop("_id", None)
+        return {
+            "status": "Success",
+            "article": document if option == "" else document[option]
+        }
 
     except Exception as e:
         return { "status": "Error", "message": str(e) }
