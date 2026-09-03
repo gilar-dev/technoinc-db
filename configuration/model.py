@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Set
 
 # Model for initializing upload article
 class WikiArticlePayload(BaseModel):
@@ -34,3 +34,6 @@ class ImagePublicId(BaseModel):
 # Model for initializing delete article
 class ArticleInit(BaseModel):
     article_id: int
+
+class LinkCheckRequest(BaseModel):
+    links: List[str]

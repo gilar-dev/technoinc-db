@@ -218,3 +218,24 @@ def get_universal_id():
 
     except Exception as e:
         return { "status": "Error", "message": str(e) }
+
+# Check links in wiki content
+async def check_links(data: dict):
+    try:
+        links = data.get("links", [])  
+        collection = db["wiki-articles"]
+        cursor = collection.find(
+            { "title": { "$in": links } },
+            { "title": 1, "_id": 0 }
+        )
+        found_titles = await cursor.to_list(length=len(links))
+        existing_titles = [doc["title"] for doc in found_titles]
+
+        return {
+            "status": "Success",
+            "existing": existing_titles
+        }
+
+    except Exception as e:
+        print(f"Error occurred: {e}")
+        return { "status": "Error", "message": str(e) }

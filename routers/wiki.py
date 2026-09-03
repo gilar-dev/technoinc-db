@@ -69,3 +69,7 @@ async def get_universal_id():
 @router.put("/universal_id/increase")
 async def increase_universal_id():
     return update.increase_universal_id()
+
+@router.post("/check-links")
+async def check_links(data: model.LinkCheckRequest):
+    return await read.check_links(data.model_dump())
