@@ -29,11 +29,6 @@ async def delete_article_wiki(data: model.ArticleInit):
 async def create_category(data: model.WikiCreateCategory):
     return create.create_category(data.model_dump())
 
-# Get category from input
-@router.get("/category/search/{input}")
-async def get_category(input: str):
-    return read.get_category(input)
-
 # Get articles list by category
 @router.get("/{category}/articles")
 async def get_articles_by_category(category: str):
@@ -47,13 +42,18 @@ async def check_article_id(category: str, article_id: str):
 # === IMPORTANT AND FIXED ===
 # Get article wiki by category and id
 @router.get("/get/{article_id}")
-async def get_article_wiki(article_id:str, option: str = ""):
+async def get_article_wiki(article_id: str, option: str = ""):
     return await read.get_article_wiki(article_id, option)
 
 # Check article existence
 @router.get("/check/{article_title}")
 async def check_article_title(article_title: str):
     return read.check_article_title(article_title)
+
+# Get category from input
+@router.get("/category/search/{input}")
+async def get_category(input: str):
+    return await read.get_category(input)
 
 # Get article id to add visited value
 @router.put("/view")
@@ -70,6 +70,7 @@ async def get_universal_id():
 async def increase_universal_id():
     return update.increase_universal_id()
 
+# Check link validations from article title
 @router.post("/check-links")
 async def check_links(data: model.LinkCheckRequest):
     return await read.check_links(data.model_dump())

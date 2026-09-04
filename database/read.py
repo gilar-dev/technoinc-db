@@ -96,32 +96,29 @@ def check_article_id(category: str, article_id: str):
         return { "status": "Error", "message": str(e) }
 
 # Get category from input
-def get_category(category: str):
+async def get_category(category: str):
+    matches: list[str] = []
+
+    async def fetch_main_categories():
+        cursor = db["wiki-main-categories"].find({})
+        main_categories = await cursor.distinct("categories")
+        for cat in main_categories:
+            category_name: str = cat
+            if category.lower() in category_name.lower():
+                matches.append({ "category": cat, "hierarchy": "Main category" })
+
+    async def fetch_categories():
+        cursor = db["wiki-categories"].find(
+            { "category": { "$regex": category, "$options": "i" } },
+            { "_id": 0, "category": 1, "parent": 1 }
+        )
+        categories = await cursor.to_list(length=10)
+        for cat in categories:
+            matches.append({ "category": cat["category"], "hierarchy": f"Subcategory of {cat["parent"]}" })
+            
     try:
-        main_categories = db["wiki-main-categories"]
-        sub_categories = db["wiki-categories"]
-        matches: list[dict] = [] # List of matches category by input
-
-        # Find matches category with main categories
-        with main_categories.find() as cursor:
-            for document in cursor:
-                for categories in document["categories"]:
-                    cat: str = categories
-                    if category.lower() in cat.lower():
-                        matches.append({ "category": cat, "hierarchy": "Main category" })
-
-        # Find matches category with existed sub categories
-        with sub_categories.find() as cursor:
-            for document in cursor:
-                # Skip if key of 'category_list' is in document
-                if "category_list" in document:
-                    continue
-                sub_category: str = document["category"]
-                if category.lower() in sub_category.lower():
-                    matches.append({ "category": sub_category, "hierarchy": f"Subcategory of {document["parent"]}" })
-
-        if len(matches) >= 10:
-            matches = matches[:10]
+        await fetch_main_categories()
+        await fetch_categories()
 
         return {
             "status": "Success",
