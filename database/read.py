@@ -158,9 +158,8 @@ def get_articles_by_category(category: str):
 async def get_article_wiki(article_id: str, option: str = ""):
     try:
         collection = db["wiki-articles"]
-        formatted_id = article_id.replace("_", " ")
-        document = await collection.find_one({
-            "title": { "$regex": f"^{formatted_id}$", "$options": "i" }
+        document: dict = await collection.find_one({
+            "title": { "$regex": f"^{article_id}$", "$options": "i" }
         })
 
         if not document:
@@ -168,7 +167,7 @@ async def get_article_wiki(article_id: str, option: str = ""):
                 "status": "Error",
                 "message": f"Article with id '{article_id}' not found."
             }
-
+        
         document.pop("_id", None)
         return {
             "status": "Success",
