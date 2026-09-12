@@ -1,19 +1,5 @@
 from configuration.database import db
     
-# Get article categories
-def get_article_categories():
-    try:
-        # Get categories
-        categories = db["wiki-categories"].distinct("category_list")
-
-        return {
-            "status": "Success",
-            "category_list": categories
-        }
-    
-    except Exception as e:
-        return { "status": "Error", "message": str(e) }
-    
 # Get all articles of all categories
 def get_all_articles():
     try:

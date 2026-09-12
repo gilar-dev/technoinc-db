@@ -1,23 +1,23 @@
 from pydantic import BaseModel
-from typing import List, Dict, Any, Set
+from typing import List, Dict, Any
 
 # Model for initializing upload article
 class WikiArticlePayload(BaseModel):
     title: str
     id: int
-    version: int
-    description: str
+    ver: int
+    desc: str
     cover: str
-    public_id: str
-    visited: int
-    classification: str
-    category: List[str]
-    history: List[Dict[str, Any]]
-    wiki_content: List[Dict[str, Any]]
+    p_id: str
+    view: int
+    cls: str
+    cat: List[str]
+    his: List[Dict[str, Any]]
+    content: List[Dict[str, Any]]
 
 # Model for initializing update article
 class WikiArticleUpdate(BaseModel):
-    id: str
+    id: int
     wiki_content: List[Dict[str, Any]]
 
 # Model for creating new wiki category
@@ -35,5 +35,6 @@ class ImagePublicId(BaseModel):
 class ArticleInit(BaseModel):
     article_id: int
 
+# Model for checking all available articles
 class LinkCheckRequest(BaseModel):
     links: List[str]

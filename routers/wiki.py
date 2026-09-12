@@ -4,11 +4,6 @@ from configuration import model
 
 router = APIRouter(prefix="/api/v1/wiki", tags=["Wiki"])
 
-# Get article categories
-@router.get("/categories")
-async def get_article_categories():
-    return read.get_article_categories()
-
 # Get all articles of all categories
 @router.get("/articles")
 async def get_all_articles():
