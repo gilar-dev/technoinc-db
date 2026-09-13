@@ -16,9 +16,9 @@ cloudinary.config(
 # Upload file data to cloud storage
 @router.post("/upload")
 async def upload_to_cloud(
-    file: UploadFile=File(...), # Get file data from request body
-    folder: str=Form(...), # Get folder name from request body
-    upload_preset: str=Form(...) # Get the upload_preset from request body
+    file: UploadFile = File(...), # Get file data from request body
+    folder: str = Form(...), # Get folder name from request body
+    upload_preset: str = Form(...) # Get the upload_preset from request body
 ):
     try:
         # Upload file to cloudinary storage
@@ -42,8 +42,8 @@ async def upload_to_cloud(
         return { "status": "Error", "message": str(e) }
     
 # Delete images as article is deleted
-@router.delete("/delete")
-async def delete_images(data: ImagePublicId):
+@router.delete("/delete/{data}")
+async def delete_images(data: ImagePublicId, folder: bool):
     try:
         # Get list of public ids
         loaded_data = data.model_dump()
@@ -54,7 +54,7 @@ async def delete_images(data: ImagePublicId):
             cloudinary.uploader.destroy(pid, invalidate=True)
 
         # Delete folder in cloudinary (optional)
-        if loaded_data.get("delete_folder"):
+        if folder:
             cloudinary.api.delete_folder(loaded_data.get("folder_name"))
 
         return {
