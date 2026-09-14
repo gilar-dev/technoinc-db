@@ -2,7 +2,7 @@ import os, cloudinary, cloudinary.api, cloudinary.uploader
 from fastapi import APIRouter, UploadFile, File, Form
 from dotenv import load_dotenv
 from configuration.model import ImagePublicId, ImageFormData
-from typing import Optional
+from typing import Optional, List
 
 router = APIRouter(prefix="/api/v1/cloudinary", tags=["Cloudinary"])
 
@@ -17,25 +17,29 @@ cloudinary.config(
 # Upload file data to cloud storage
 @router.post("/upload")
 async def upload_to_cloud(
-    file: UploadFile = File(...), # Get file data from request body
+    file: List[UploadFile] = File(...), # Get file data from request body
     folder: str = Form(...), # Get folder name from request body
     upload_preset: str = Form(...) # Get the upload_preset from request body
 ):
     try:
-        # Upload file to cloudinary storage
-        response = cloudinary.uploader.upload(
-            file.file,
-            folder = folder,
-            upload_preset = upload_preset,
-            filename_override = file.filename,
-            use_filename = True,
-            unique_filename = True
-        )
+        public_ids: List[str] = []
+        secure_urls: List[str] = []
+        for item in file:
+            # Upload file to cloudinary storage
+            response: dict = cloudinary.uploader.upload(
+                item.file,
+                folder = folder,
+                upload_preset = upload_preset,
+                filename_override = item.filename,
+                use_filename = True,
+                unique_filename = True
+            )
+            public_ids.append(response.get("public_id"))
+            secure_urls.append(response.get("secure_url"))
         return {
             "status": "Success",
-            "file_name": file.filename,
-            "public_id": response["public_id"],
-            "secure_url": response["secure_url"]
+            "public_ids": public_ids,
+            "secure_urls": secure_urls
         }
     except Exception as e:
         return { "status": "Error", "message": str(e) }
