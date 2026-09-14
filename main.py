@@ -1,5 +1,5 @@
 # FastAPI
-from fastapi import FastAPI, HTTPException, Response
+from fastapi import FastAPI, HTTPException, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 
 # Locals
@@ -18,11 +18,6 @@ app.add_middleware(
     allow_headers = ["*"]
 )
 
-# Redirect to specific router
-app.include_router(contribution.router)
-app.include_router(cloudinary.router)
-app.include_router(wiki.router)
-
 # Entry url
 @app.get("/")
 async def entry():
@@ -33,10 +28,11 @@ async def entry():
             "website": "https://technoinc.world",
             "description": "Start reading a journey of five years Minecraft survival world!"
         }
-    
     except HTTPException as httperror:
-        raise HTTPException(status_code=404, detail=f"Cannot connect to database: {httperror}")
-    
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Cannot connect to database: {httperror}"
+        )
     except Exception as e:
         return { "status": "Error", "message": str(e) }
 
@@ -44,3 +40,8 @@ async def entry():
 @app.get("/favicon.ico", include_in_schema=False)
 async def favicon():
     return Response(status_code=204)
+
+# Redirect to specific router
+app.include_router(contribution.router)
+app.include_router(cloudinary.router)
+app.include_router(wiki.router)

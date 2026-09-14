@@ -1,3 +1,4 @@
+from fastapi import UploadFile
 from pydantic import BaseModel
 from typing import List, Dict, Any
 
@@ -30,6 +31,9 @@ class ImagePublicId(BaseModel):
     folder_name: str
     public_ids: List[str]
     delete_folder: bool
+
+class ImageFormData(BaseModel):
+    form_data_list: List[UploadFile]
 
 # Model for initializing delete article
 class ArticleInit(BaseModel):

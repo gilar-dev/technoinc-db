@@ -1,16 +1,17 @@
 import os, cloudinary, cloudinary.api, cloudinary.uploader
 from fastapi import APIRouter, UploadFile, File, Form
 from dotenv import load_dotenv
-from configuration.model import ImagePublicId
+from configuration.model import ImagePublicId, ImageFormData
+from typing import Optional
 
 router = APIRouter(prefix="/api/v1/cloudinary", tags=["Cloudinary"])
 
 load_dotenv()
 cloudinary.config(
-    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.getenv("CLOUDINARY_API_KEY"),
-    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
-    secure=True
+    cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key = os.getenv("CLOUDINARY_API_KEY"),
+    api_secret = os.getenv("CLOUDINARY_API_SECRET"),
+    secure = True
 )
 
 # Upload file data to cloud storage
@@ -24,43 +25,37 @@ async def upload_to_cloud(
         # Upload file to cloudinary storage
         response = cloudinary.uploader.upload(
             file.file,
-            folder=folder,
-            upload_preset=upload_preset,
-            filename_override=file.filename,
-            use_filename=True,
-            unique_filename=True
+            folder = folder,
+            upload_preset = upload_preset,
+            filename_override = file.filename,
+            use_filename = True,
+            unique_filename = True
         )
-
         return {
             "status": "Success",
             "file_name": file.filename,
             "public_id": response["public_id"],
             "secure_url": response["secure_url"]
         }
-
     except Exception as e:
         return { "status": "Error", "message": str(e) }
     
 # Delete images as article is deleted
-@router.delete("/delete/{data}")
-async def delete_images(data: ImagePublicId, folder: bool):
+@router.delete("/delete")
+async def delete_images(data: ImagePublicId, folder: Optional[str]):
     try:
         # Get list of public ids
         loaded_data = data.model_dump()
         public_ids = loaded_data.get("public_ids")
-        
         # Delete asset by using Upload API destroy method
         for pid in public_ids:
             cloudinary.uploader.destroy(pid, invalidate=True)
-
         # Delete folder in cloudinary (optional)
-        if folder:
+        if folder == "yes":
             cloudinary.api.delete_folder(loaded_data.get("folder_name"))
-
         return {
             "status": "Success",
             "message": "Deleted"
         }
-
     except Exception as e:
         return { "status": "Error", "message": str(e) }
