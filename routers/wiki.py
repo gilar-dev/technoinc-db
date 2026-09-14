@@ -75,9 +75,23 @@ async def get_universal_id():
         )
 
 # Update universal id by increasing its value
-@router.put("/universal_id/increase")
+@router.put("/universal-id/increase")
 async def increase_universal_id():
-    return update.increase_universal_id()
+    try:
+        collection = db["wiki-configurations"]
+        collection.update_one(
+            { "type": "configurations" },
+            { "$inc": { "un_id": 1 } }
+        )
+        return {
+            "status": "Success",
+            "message": "Universal Id is successfully increased"
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
 
 # Check link validations from article title
 @router.post("/check-links")

@@ -8,6 +8,7 @@ router = APIRouter(prefix="/api/v1/contribution", tags=["Contribution"])
 # Upload or create new article
 @router.post("/upload")
 async def upload_wiki_article(payload: model.WikiArticlePayload):
+    """Upload new article payload to database"""
     try:
         article_data = payload.model_dump()
         collection = db["wiki-articles"]

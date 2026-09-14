@@ -147,13 +147,8 @@ async def get_article_wiki(article_id: str, option: str = ""):
         document: dict = await collection.find_one({
             "title": { "$regex": f"^{article_id}$", "$options": "i" }
         })
-
         if not document:
-            return {
-                "status": "Error",
-                "message": f"Article with id '{article_id}' not found."
-            }
-        
+            return
         document.pop("_id", None)
         return {
             "status": "Success",

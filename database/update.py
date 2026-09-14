@@ -44,23 +44,3 @@ def increase_visited(data: dict):
 
     except Exception as e:
         return { "status": "Error", "message": str(e) }
-
-# Increase universal wiki id
-def increase_universal_id():
-    try:
-        # Initializing document
-        document = db["wiki-configurations"]
-        # Updating universal id
-        document.update_one(
-            { "type": "configurations" },
-            { "$inc": { "universal_id": 1 } }
-        )
-
-        # Return successful updating status
-        return {
-            "status": "Success",
-            "message": "Universal Id is successfully increased"
-        }
-
-    except Exception as e:
-        return { "status": "Error", "message": str(e) }
