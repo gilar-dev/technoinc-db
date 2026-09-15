@@ -106,7 +106,8 @@ async def check_title_existence(title: str):
         pattern = f"^{re.escape(title)}$"
         collection = db["wiki-articles"]
         document = await collection.find_one(
-            { "title": { "$regex": pattern, "$options": "i" }}
+            { "title": { "$regex": pattern, "$options": "i" }},
+            { "_id": 1 }
         )
         is_exist = True if document else False
         return { "status": "Success", "is_exist": is_exist }

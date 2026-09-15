@@ -11,9 +11,9 @@ async def upload_wiki_article(payload: model.WikiArticlePayload):
     """Upload new article payload to database"""
     try:
         article_data = payload.model_dump()
-        collection = db["wiki-articles"]
+        document = db["wiki-articles"]
         # Insert new article on available collection
-        collection.insert_one(article_data)
+        await document.insert_one(article_data)
         return {
             "status": "Success",
             "url": f"/wiki/{article_data["title"]}"
@@ -24,4 +24,20 @@ async def upload_wiki_article(payload: model.WikiArticlePayload):
 # Update article from contribution models
 @router.patch("/update")
 async def update_article(article_data: model.WikiArticlePayload):
-    return update.update_article(article_data.model_dump())
+    """Update edited article payload to database"""
+    try:
+        loaded_data = article_data.model_dump()
+        loaded_data.pop("ver", None)
+        document = db["wiki-articles"]
+        # Update document
+        await document.update_one(
+            { "id": loaded_data["id"] }, 
+            { "$set": loaded_data, "$inc": { "ver": 1 } }
+        )
+        return {
+            "status": "Success",
+            "message": f"Article with title '{article_data["title"]}' is successfully updated"
+        }
+    except Exception as e:
+        print(e)
+        return { "status": "Error", "message": str(e) }

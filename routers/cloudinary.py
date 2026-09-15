@@ -2,7 +2,7 @@ import os, cloudinary, cloudinary.api, cloudinary.uploader
 from fastapi import APIRouter, UploadFile, File, Form
 from dotenv import load_dotenv
 from configuration.model import ImagePublicId, ImageFormData
-from typing import Optional, List
+from typing import List
 
 router = APIRouter(prefix="/api/v1/cloudinary", tags=["Cloudinary"])
 
@@ -46,7 +46,7 @@ async def upload_to_cloud(
     
 # Delete images as article is deleted
 @router.delete("/delete")
-async def delete_images(data: ImagePublicId, folder: Optional[str]):
+async def delete_images(data: ImagePublicId):
     try:
         # Get list of public ids
         loaded_data = data.model_dump()
@@ -55,7 +55,7 @@ async def delete_images(data: ImagePublicId, folder: Optional[str]):
         for pid in public_ids:
             cloudinary.uploader.destroy(pid, invalidate=True)
         # Delete folder in cloudinary (optional)
-        if folder == "yes":
+        if loaded_data.get("delete_folder"):
             cloudinary.api.delete_folder(loaded_data.get("folder_name"))
         return {
             "status": "Success",

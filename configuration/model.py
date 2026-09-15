@@ -31,7 +31,7 @@ class WikiCreateCategory(BaseModel):
 class ImagePublicId(BaseModel):
     folder_name: str
     public_ids: List[str]
-    delete_folder: bool
+    delete_folder: bool = False
 
 class ImageFormData(BaseModel):
     form_data_list: List[UploadFile]
