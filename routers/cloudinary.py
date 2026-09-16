@@ -25,7 +25,7 @@ async def upload_to_cloud(
         public_ids: List[str] = []
         secure_urls: List[str] = []
         for item in file:
-            # Upload file to cloudinary storage
+            # Upload file to cloudinary cloud storage
             response: dict = cloudinary.uploader.upload(
                 item.file,
                 folder = folder,
@@ -34,6 +34,7 @@ async def upload_to_cloud(
                 use_filename = True,
                 unique_filename = True
             )
+            # Store image public ids & secure urls on a list
             public_ids.append(response.get("public_id"))
             secure_urls.append(response.get("secure_url"))
         return {

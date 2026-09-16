@@ -141,7 +141,7 @@ def get_articles_by_category(category: str):
 
 # === IMPORTANT AND FIXED ===
 # Get article wiki by category and id
-async def get_article_wiki(article_id: str, option: str = ""):
+async def get_article_wiki(article_id: str, field: str = ""):
     try:
         collection = db["wiki-articles"]
         document: dict = await collection.find_one({
@@ -152,7 +152,7 @@ async def get_article_wiki(article_id: str, option: str = ""):
         document.pop("_id", None)
         return {
             "status": "Success",
-            "article": document if option == "" else document[option]
+            "article": document if field == "" else document[field]
         }
 
     except Exception as e:
