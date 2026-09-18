@@ -12,9 +12,9 @@ class WikiArticlePayload(BaseModel):
     p_id: str
     view: int
     cls: str
-    cat: List[str]
+    cat: str
     edit: str
-    his: List[Dict[str, Any]]
+    his: str
     content: str
 
 # Model for initializing update article

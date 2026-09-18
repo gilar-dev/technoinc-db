@@ -7,7 +7,6 @@ DB_URI = os.getenv("MONGO_URI")
 
 origins = [
     "https://technoinc.world",
-    "https://technoinc.netlify.app",
-    "http://localhost:3000",
-    "https://technoinc-next.netlify.app"
+    "https://technoinc-next.netlify.app",
+    "http://localhost:3000"
 ]

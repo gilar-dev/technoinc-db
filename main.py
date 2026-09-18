@@ -7,7 +7,13 @@ from configuration import config
 from routers import contribution, cloudinary, wiki
 
 # Initialize server
-app = FastAPI(title="TechnoBackend")
+DISABLE_DOCS = True
+app = FastAPI(
+    title="TechnoBackend",
+    docs_url=None if DISABLE_DOCS else "/docs",
+    redoc_url=None if DISABLE_DOCS else "/redoc",
+    openapi_url=None if DISABLE_DOCS else "/openapi.json"
+)
 
 # Add middleware configurations
 app.add_middleware(
