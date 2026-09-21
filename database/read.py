@@ -1,35 +1,4 @@
 from configuration.database import db
-    
-# Get all articles of all categories
-def get_all_articles():
-    try:
-        collections = db.list_collection_names()
-        # Filter only cllection with category
-        categories = [cat for cat in collections if cat.startswith("cat-")]
-        # Empty list for articles data
-        articles = []
-
-        for cat in categories:
-            # Get all articles from category name
-            document = db[cat].find({})
-
-            if document:
-                # Loop through document
-                for doc in document:
-                    # Delete unnecessary property
-                    if "_id" in doc:
-                        del doc["_id"]
-                        del doc["wiki_content"]
-
-                    articles.append(doc)
-
-        return {
-            "status": "Success",
-            "data": articles
-        }
-
-    except Exception as e:
-        return { "status": "Error", "message": str(e) }
 
 # Get article by input value
 def search_article(input: str):
@@ -177,42 +146,4 @@ def check_article_title(article_title: str):
         }
 
     except Exception as e:
-        return { "status": "Error", "message": str(e) }
-
-# Get current universal id value
-def get_universal_id():
-    try:
-        # Initializing document
-        document = db["wiki-configurations"]
-        # Getting universal id value from document
-        universal_id: int = document.distinct("universal_id", { "type": "configurations" })[0]
-
-        # Return successful getting universal value
-        return {
-            "status": "Success",
-            "universal_id": universal_id
-        }
-
-    except Exception as e:
-        return { "status": "Error", "message": str(e) }
-
-# Check links in wiki content
-async def check_links(data: dict):
-    try:
-        links = data.get("links", [])  
-        collection = db["wiki-articles"]
-        cursor = collection.find(
-            { "title": { "$in": links } },
-            { "title": 1, "_id": 0 }
-        )
-        found_titles = await cursor.to_list(length=len(links))
-        existing_titles = [doc["title"] for doc in found_titles]
-
-        return {
-            "status": "Success",
-            "existing": existing_titles
-        }
-
-    except Exception as e:
-        print(f"Error occurred: {e}")
         return { "status": "Error", "message": str(e) }
