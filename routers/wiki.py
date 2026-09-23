@@ -7,9 +7,30 @@ from configuration.database import db
 router = APIRouter(prefix="/api/v1/wiki", tags=["Wiki"])
 
 # Get article by matches input value
-@router.get("/search/{input}")
-async def search_article(input: str):
-    return read.search_article(input)
+@router.get("/search/{title}")
+async def search_article(title: str):
+    try:
+        clean_title = title.strip()
+        if not clean_title:
+            return { "status": "Success", "articles": [] }
+
+        collection = db["wiki-articles"]
+        cursor = collection.find(
+            { "title": { "$regex": re.escape(clean_title), "$options": "i" } },
+            { "_id": 0, "title": 1, "cover": 1, "desc": 1 }
+        )
+        articles = await cursor.to_list(length=20)
+
+        return {
+            "status": "Success",
+            "articles": articles
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
 
 # Delete article from database
 @router.delete("/delete")
@@ -21,26 +42,11 @@ async def delete_article_wiki(data: model.ArticleInit):
 async def create_category(data: model.WikiCreateCategory):
     return create.create_category(data.model_dump())
 
-# Get articles list by category
-@router.get("/{category}/articles")
-async def get_articles_by_category(category: str):
-    return read.get_articles_by_category(category)
-
-# Get article existence
-@router.get("/{category}/{article_id}/exist")
-async def check_article_id(category: str, article_id: str):
-    return read.check_article_id(category, article_id)
-
 # === IMPORTANT AND FIXED ===
 # Get article wiki by category and id
 @router.get("/get/{article_id}")
 async def get_article_wiki(article_id: str, field: str = ""):
     return await read.get_article_wiki(article_id, field)
-
-# Check article existence
-@router.get("/check/{article_title}")
-async def check_article_title(article_title: str):
-    return read.check_article_title(article_title)
 
 # Get category from input
 @router.get("/category/search/{input}")
