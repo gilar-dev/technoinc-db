@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-DB_URI = os.getenv("MONGO_URI")
+DB_WIKI = os.getenv("MONGO_WIKI")
+DB_CONTRIBUTOR = os.getenv("MONGO_CONTRIBUTOR")
 
 origins = [
     "https://technoinc.world",

@@ -112,7 +112,7 @@ def get_articles_by_category(category: str):
 # Get article wiki by category and id
 async def get_article_wiki(article_id: str, field: str = ""):
     try:
-        collection = db["wiki-articles"]
+        collection = db.get_collection("wiki-articles")
         document: dict = await collection.find_one({
             "title": { "$regex": f"^{article_id}$", "$options": "i" }
         })

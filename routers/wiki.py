@@ -14,7 +14,7 @@ async def search_article(title: str):
         if not clean_title:
             return { "status": "Success", "articles": [] }
 
-        collection = db["wiki-articles"]
+        collection = db.get_collection("wiki-articles")
         cursor = collection.find(
             { "title": { "$regex": re.escape(clean_title), "$options": "i" } },
             { "_id": 0, "title": 1, "cover": 1, "desc": 1 }
