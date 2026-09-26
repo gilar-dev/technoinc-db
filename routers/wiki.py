@@ -1,6 +1,8 @@
 import re, json
 from fastapi import APIRouter, HTTPException, status
+from typing import Optional
 from database import create, read, update, delete
+from services import wiki
 from configuration import model
 from configuration.database import db
 
@@ -19,7 +21,7 @@ async def search_article(title: str):
             { "title": { "$regex": re.escape(clean_title), "$options": "i" } },
             { "_id": 0, "title": 1, "cover": 1, "desc": 1 }
         )
-        articles = await cursor.to_list(length=20)
+        articles = await cursor.to_list(length=15)
 
         return {
             "status": "Success",
@@ -44,9 +46,9 @@ async def create_category(data: model.WikiCreateCategory):
 
 # === IMPORTANT AND FIXED ===
 # Get article wiki by category and id
-@router.get("/get/{article_id}")
-async def get_article_wiki(article_id: str, field: str = ""):
-    return await read.get_article_wiki(article_id, field)
+@router.get("/{title}")
+async def get_article(title: str, field: Optional[str] = ""):
+    return await wiki.get_article(title, field)
 
 # Get category from input
 @router.get("/category/search/{input}")
