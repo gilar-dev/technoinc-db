@@ -1,4 +1,4 @@
-import re, json
+import re
 from fastapi import APIRouter, HTTPException, status
 from typing import Optional
 from database import create, read, update, delete
@@ -21,7 +21,7 @@ async def search_article(title: str):
             { "title": { "$regex": re.escape(clean_title), "$options": "i" } },
             { "_id": 0, "title": 1, "cover": 1, "desc": 1 }
         )
-        articles = await cursor.to_list(length=15)
+        articles = await cursor.to_list(length=10)
 
         return {
             "status": "Success",
@@ -45,7 +45,10 @@ async def create_category(data: model.WikiCreateCategory):
     return create.create_category(data.model_dump())
 
 # === IMPORTANT AND FIXED ===
-# Get article wiki by category and id
+@router.get("/articles/sitemap")
+async def get_articles_sitemap():
+    return await wiki.get_articles_sitemap()
+
 @router.get("/{title}")
 async def get_article(title: str, field: Optional[str] = ""):
     return await wiki.get_article(title, field)
@@ -115,30 +118,6 @@ async def check_links(data: model.LinkCheckRequest):
             "existing": existing_titles
         }
     except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-
-@router.get("/articles")
-async def get_articles():
-    try:
-        collection = db["wiki-articles"]
-        documents = collection.find(
-            {}, { "_id": 0, "title": 1, "cover": 1, "his": 1 }
-        )
-        articles = await documents.to_list()
-        title_list = [article["title"] for article in articles]
-        cover_list = [article["cover"] for article in articles]
-        modified_list = [json.loads(article["his"])[-1]["date"] for article in articles]
-        return {
-            "status": "Success",
-            "title": title_list,
-            "cover": cover_list,
-            "date": modified_list
-        }
-    except Exception as e:
-        print(e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
