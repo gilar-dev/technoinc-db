@@ -1,5 +1,5 @@
 import re
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Query
 from typing import Optional
 from database import create, read, update, delete
 from services import wiki
@@ -8,46 +8,23 @@ from configuration.database import db
 
 router = APIRouter(prefix="/api/v1/wiki", tags=["Wiki"])
 
-# Get article by matches input value
-@router.get("/search/{title}")
-async def search_article(title: str):
-    try:
-        clean_title = title.strip()
-        if not clean_title:
-            return { "status": "Success", "articles": [] }
-
-        collection = db.get_collection("wiki-articles")
-        cursor = collection.find(
-            { "title": { "$regex": re.escape(clean_title), "$options": "i" } },
-            { "_id": 0, "title": 1, "cover": 1, "desc": 1 }
-        )
-        articles = await cursor.to_list(length=10)
-
-        return {
-            "status": "Success",
-            "articles": articles
-        }
-
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-
-# Delete article from database
-@router.delete("/delete")
-async def delete_article_wiki(data: model.ArticleInit):
-    return delete.delete_article_wiki(data.model_dump())
-
 # Create new category
 @router.post("/category/create")
 async def create_category(data: model.WikiCreateCategory):
     return create.create_category(data.model_dump())
 
 # === IMPORTANT AND FIXED ===
+@router.post("/check-links")
+async def check_links(data: model.LinkCheckRequest):
+    return await wiki.check_links(data)
+
 @router.get("/articles/sitemap")
 async def get_articles_sitemap():
     return await wiki.get_articles_sitemap()
+
+@router.get("/search/{input}")
+async def get_matches_articles(input: str):
+    return await wiki.get_matches_articles(input)
 
 @router.get("/{title}")
 async def get_article(title: str, field: Optional[str] = ""):
@@ -57,11 +34,6 @@ async def get_article(title: str, field: Optional[str] = ""):
 @router.get("/category/search/{input}")
 async def get_category(input: str):
     return await read.get_category(input)
-
-# Get article id to add visited value
-@router.put("/view")
-async def initialize_ttl(data: model.ArticleInit):
-    return update.increase_visited(data.model_dump())
 
 # Get universal id value from database
 @router.get("/universal-id/get")
@@ -93,29 +65,6 @@ async def increase_universal_id():
         return {
             "status": "Success",
             "message": "Universal Id is successfully increased"
-        }
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
-
-# Check link validations from article title
-@router.post("/check-links")
-async def check_links(data: model.LinkCheckRequest):
-    """Check link validations from article title"""
-    try:
-        links = data.model_dump().get("links", [])
-        collection = db["wiki-articles"]
-        cursor = collection.find(
-            { "title": { "$in": links } },
-            { "title": 1, "_id": 0 }
-        )
-        found_titles = await cursor.to_list(length=len(links))
-        existing_titles = [doc["title"] for doc in found_titles]
-        return {
-            "status": "Success",
-            "existing": existing_titles
         }
     except Exception as e:
         raise HTTPException(

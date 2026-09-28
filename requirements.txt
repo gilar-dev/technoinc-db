@@ -6,3 +6,4 @@ cloudinary
 dotenv
 python-multipart
 motor
+httpx

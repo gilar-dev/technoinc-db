@@ -1,10 +1,9 @@
-import json
-from fastapi import Query
+import re, json
 from typing import Optional
 from configuration import model
 from configuration.database import db
 
-async def get_article(title: str, field: str = Query(...)):
+async def get_article(title: str, field: str = ""):
     """Get article wiki or get its specific field (optional)"""
     try:
         collection = db.get_collection("wiki-articles")
@@ -37,5 +36,36 @@ async def get_articles_sitemap():
             "cover": cover_list,
             "date": modified_list
         }
+    except Exception as e:
+        return { "status": "Error", "message": str(e) }
+
+async def get_matches_articles(input: str):
+    """Get existing matches articles from search input"""
+    try:
+        clean_input = input.strip()
+        if not clean_input:
+            return { "status": "Success", "articles": [] }
+        collection = db.get_collection("wiki-articles")
+        cursor = collection.find(
+            { "title": { "$regex": f"^{re.escape(clean_input)}", "$options": "i" } },
+            { "_id": 0, "title": 1, "desc": 1, "cover": 1 }
+        )
+        articles = await cursor.to_list(length=10)
+        return { "status": "Success", "articles": articles }
+    except Exception as e:
+        return { "status": "Error", "message": str(e) }
+
+async def check_links(data: model.LinkCheckRequest):
+    try:
+        links = data.model_dump().get("links", [])
+        regex_links = [re.compile(f"^{link}$", re.IGNORECASE) for link in links]
+        collection = db.get_collection("wiki-articles")
+        cursor = collection.find(
+            { "title": { "$in": regex_links } },
+            { "_id": 0, "title": 1 }
+        )
+        found_titles: list[dict] = await cursor.to_list(length=len(links))
+        existing_links = [link.get("title").lower() for link in found_titles]
+        return { "status": "Success", "existing": existing_links }
     except Exception as e:
         return { "status": "Error", "message": str(e) }
