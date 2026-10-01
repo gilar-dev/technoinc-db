@@ -65,7 +65,7 @@ async def check_links(data: model.LinkCheckRequest):
             { "_id": 0, "title": 1 }
         )
         found_titles: list[dict] = await cursor.to_list(length=len(links))
-        existing_links = [link.get("title").lower() for link in found_titles]
+        existing_links = [link.get("title") for link in found_titles]
         return { "status": "Success", "existing": existing_links }
     except Exception as e:
         return { "status": "Error", "message": str(e) }
