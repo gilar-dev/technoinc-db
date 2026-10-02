@@ -9,5 +9,6 @@ DB_CONTRIBUTOR = os.getenv("MONGO_CONTRIBUTOR")
 origins = [
     "https://technoinc.world",
     "https://technoinc-next.netlify.app",
+    "https://technoinc-app.vercel.app",
     "http://localhost:3000"
 ]
