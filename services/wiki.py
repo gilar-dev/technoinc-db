@@ -58,7 +58,7 @@ async def get_matches_articles(input: str):
 async def check_links(data: model.LinkCheckRequest):
     try:
         links = data.model_dump().get("links", [])
-        regex_links = [re.compile(f"^{link}$", re.IGNORECASE) for link in links]
+        regex_links = [re.compile(f"^{re.escape(link)}$", re.IGNORECASE) for link in links]
         collection = db.get_collection("wiki-articles")
         cursor = collection.find(
             { "title": { "$in": regex_links } },
