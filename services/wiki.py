@@ -12,9 +12,16 @@ async def get_article(title: str, field: str = ""):
         })
         if not document: return None
         document.pop("_id")
+        get_redirect_arts = collection.find(
+            { "content": { "$regex": f"\"type\":\"uni-redirect\",\"to\":\"{title}\"", "$options": "i" } },
+            { "_id": 0, "title": 1 }
+        )
+        redirect_list: list[dict] = await get_redirect_arts.to_list()
+        redirect_arts = [art.get("title") for art in redirect_list]
         return {
             "status": "Success",
-            "data": document if not field else document.get(field)
+            "data": document if not field else document.get(field),
+            "redirect_arts": redirect_arts
         }
     except Exception as e:
         return { "status": "Error", "message": str(e) }

@@ -1,7 +1,7 @@
 import re
 from fastapi import APIRouter, HTTPException, status, Query
 from typing import Optional
-from database import create, read, update, delete
+from database import create, read
 from services import wiki
 from configuration import model
 from configuration.database import db

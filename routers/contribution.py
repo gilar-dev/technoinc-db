@@ -1,6 +1,5 @@
 from fastapi import APIRouter
 from configuration import model
-from configuration.database import db
 from services import contribution
 
 router = APIRouter(prefix="/api/v1/contribution", tags=["Contribution"])
