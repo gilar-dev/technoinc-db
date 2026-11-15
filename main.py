@@ -32,7 +32,7 @@ async def entry():
             "status": "Success",
             "message": "Welcome to the official API of TechnoInc World!",
             "website": "https://technoinc.world",
-            "description": "Start reading a journey of five years Minecraft survival world!"
+            "description": "Start reading a journey of five years Minecraft survival world! By TechnoInc MC Wiki"
         }
     
     except HTTPException as httperror:
