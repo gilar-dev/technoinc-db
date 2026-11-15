@@ -1,7 +1,8 @@
+from typing import Any
 from configuration.database import db
 
 # Delete article from database
-def delete_article_wiki(data: dict):
+def delete_article_wiki(data: dict[str, Any]):
     try:
         document = db["wiki-articles"]
         result = document.delete_one({ "id": data["article_id"] })

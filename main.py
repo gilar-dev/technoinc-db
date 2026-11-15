@@ -9,10 +9,10 @@ from routers import contribution, cloudinary, wiki
 # Initialize server
 DISABLE_DOCS = True
 app = FastAPI(
-    title="TechnoBackend",
-    docs_url=None if DISABLE_DOCS else "/docs",
-    redoc_url=None if DISABLE_DOCS else "/redoc",
-    openapi_url=None if DISABLE_DOCS else "/openapi.json"
+    title = "TechnoBackend",
+    docs_url = None if DISABLE_DOCS else "/docs",
+    redoc_url = None if DISABLE_DOCS else "/redoc",
+    openapi_url = None if DISABLE_DOCS else "/openapi.json"
 )
 
 # Add middleware configurations
@@ -34,11 +34,13 @@ async def entry():
             "website": "https://technoinc.world",
             "description": "Start reading a journey of five years Minecraft survival world!"
         }
+    
     except HTTPException as httperror:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Cannot connect to database: {httperror}"
         )
+    
     except Exception as e:
         return { "status": "Error", "message": str(e) }
 

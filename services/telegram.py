@@ -1,12 +1,13 @@
 import httpx, os
 from dotenv import load_dotenv
+from typing import Any
 
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
-async def send_created_article(title: str, modify_info: dict) -> None:
+async def send_created_article(title: str, modify_info: dict[str, Any]) -> None:
     message = f"""
 🌟 New article is created just now!
 
@@ -25,7 +26,7 @@ https://technoinc.world/wiki/{title}
             "parse_mode": "HTML"
         })
 
-async def send_updated_article(title: str, modify_info: dict) -> None:
+async def send_updated_article(title: str, modify_info: dict[str, Any]) -> None:
     message = f"""
 ⭐ An article is edited just now!
 

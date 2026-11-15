@@ -1,5 +1,5 @@
 import re
-from fastapi import APIRouter, HTTPException, status, Query
+from fastapi import APIRouter, HTTPException, status
 from typing import Optional
 from database import create, read
 from services import wiki
@@ -45,6 +45,8 @@ async def get_universal_id():
             { "type": "configurations" },
             { "un_id": 1, "_id": 0 }
         )
+        if not document: return None
+
         return { "status": "Success", "universal_id": document["un_id"] }
     except Exception as e:
         raise HTTPException(
@@ -58,7 +60,7 @@ async def increase_universal_id():
     """Update universal id value by increasing it"""
     try:
         collection = db["wiki-configurations"]
-        collection.update_one(
+        await collection.update_one(
             { "type": "configurations" },
             { "$inc": { "un_id": 1 } }
         )

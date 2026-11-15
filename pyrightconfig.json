@@ -1,0 +1,7 @@
+{
+    "include": ["."],
+    "exclude": ["**/__pycache__"],
+    "typeCheckingMode": "strict",
+    "reportMissingTypeStubs": false,
+    "reportUnknownMemberType": false
+}

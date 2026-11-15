@@ -1,10 +1,11 @@
+from typing import Any
 from configuration.database import db
 
 # Create new category
-def create_category(data: dict):
+async def create_category(data: dict[str, Any]):
     try:
         collection = db["wiki-categories"]
-        collection.insert_one({
+        await collection.insert_one({
             "category": data["category_name"],
             "parent": data["category_parent"]
         })
