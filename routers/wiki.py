@@ -5,6 +5,7 @@ from database import create, read
 from services import wiki
 from configuration import model
 from configuration.database import db
+from random import randint
 
 router = APIRouter(prefix="/api/v1/wiki", tags=["Wiki"])
 
@@ -14,6 +15,29 @@ async def create_category(data: model.WikiCreateCategory):
     return create.create_category(data.model_dump())
 
 # === IMPORTANT AND FIXED ===
+@router.get("")
+async def entry(
+    random: bool = False
+):
+    if random:
+        try:
+            collection = db.get_collection("wiki-articles")
+            cursor = collection.find({
+                "content": {
+                    "$not": {
+                        "$regex": "\"type\":\"uni-redirect\"",
+                        "$options": "i"
+                    }
+                }
+            }, { "_id": 0, "title": 1 })
+            articles: list[dict[str, str]] = await cursor.to_list()
+            chosen = articles[randint(0, len(articles))].get("title")
+            print(chosen)
+            return { "status": "Success", "article": chosen }
+        except Exception as e:
+            print(e)
+            return { "status": "Error", "message": str(e) }
+
 @router.post("/check-links")
 async def check_links(data: model.LinkCheckRequest):
     return await wiki.check_links(data)

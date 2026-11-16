@@ -26,10 +26,10 @@ async def update_article_wiki(payload: WikiArticlePayload):
         document = db.get_collection("wiki-articles")
         # Update document
         await document.update_one(
-            { "id": loaded_data["id"] }, 
+            { "id": payload.id }, 
             { "$set": loaded_data, "$inc": { "ver": 1 } }
         )
-        # Send notification to telegram TechnoBot
+        # Send notification to telegram Farel
         await telegram.send_updated_article(payload.title, modify_info)
         return {
             "status": "Success",
