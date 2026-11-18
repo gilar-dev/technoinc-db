@@ -1,11 +1,10 @@
 import re
 from fastapi import APIRouter, HTTPException, status
-from typing import Optional
+from typing import Optional, Literal
 from database import create, read
 from services import wiki
 from configuration import model
 from configuration.database import db
-from random import randint
 
 router = APIRouter(prefix="/api/v1/wiki", tags=["Wiki"])
 
@@ -16,27 +15,11 @@ async def create_category(data: model.WikiCreateCategory):
 
 # === IMPORTANT AND FIXED ===
 @router.get("")
-async def entry(
-    random: bool = False
-):
-    if random:
-        try:
-            collection = db.get_collection("wiki-articles")
-            cursor = collection.find({
-                "content": {
-                    "$not": {
-                        "$regex": "\"type\":\"uni-redirect\"",
-                        "$options": "i"
-                    }
-                }
-            }, { "_id": 0, "title": 1 })
-            articles: list[dict[str, str]] = await cursor.to_list()
-            chosen = articles[randint(0, len(articles))].get("title")
-            print(chosen)
-            return { "status": "Success", "article": chosen }
-        except Exception as e:
-            print(e)
-            return { "status": "Error", "message": str(e) }
+async def entry(field: Literal["random", "total"]):
+    if field == "random":
+        return await wiki.wiki_random()
+    elif field == "total":
+        return await wiki.wiki_total()
 
 @router.post("/check-links")
 async def check_links(data: model.LinkCheckRequest):
@@ -49,10 +32,6 @@ async def get_articles_sitemap():
 @router.get("/search/{input}")
 async def get_matches_articles(input: str):
     return await wiki.get_matches_articles(input)
-
-@router.get("/{title}")
-async def get_article(title: str, field: Optional[str] = ""):
-    return await wiki.get_article(title, field)
 
 # Get category from input
 @router.get("/category/search/{input}")
@@ -116,3 +95,7 @@ async def check_title_existence(title: str):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+
+@router.get("/{title}")
+async def get_article(title: str, field: Optional[str] = ""):
+    return await wiki.get_article(title, field)

@@ -2,6 +2,38 @@ import re, json
 from typing import Any
 from configuration import model
 from configuration.database import db
+from random import randint
+
+async def wiki_total():
+    try:
+        collection = db.get_collection("wiki-articles")
+        document = collection.find(
+            { "content": { "$not": { "$regex": "\"type\":\"uni-redirect\"", "$options": "i" }}},
+            { "_id": 0, "title": 1 }
+        )
+
+        total = await document.to_list()
+
+        return { "status": "Success", "total_articles": len(total) }
+
+    except Exception as e:
+        return { "status": "Error", "message": str(e) }
+
+async def wiki_random():
+    try:
+        collection = db.get_collection("wiki-articles")
+        document = collection.find(
+            { "content": { "$not": { "$regex": "\"type\":\"uni-redirect\"", "$options": "i" }}},
+            { "_id": 0, "title": 1 }
+        )
+
+        articles = await document.to_list()
+        selected = articles[randint(0, len(articles))].get("title")
+
+        return { "status": "Success", "data": selected }
+
+    except Exception as e:
+        return { "status": "Error", "message": str(e) }
 
 async def get_article(title: str, field: str | None) -> dict[str, Any] | None:
     """Get article wiki or get its specific field (optional)"""
