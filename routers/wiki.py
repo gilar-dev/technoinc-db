@@ -99,3 +99,31 @@ async def check_title_existence(title: str):
 @router.get("/{title}")
 async def get_article(title: str, field: Optional[str] = ""):
     return await wiki.get_article(title, field)
+
+@router.get("/{title}/info")
+async def get_article_info(title: str):
+    try:
+        collection = db.get_collection("wiki-articles")
+        document = await collection.find_one(
+            { "title": { "$regex": f"^{title}$", "$options": "i" }}
+        )
+        if not document: return
+
+        document.pop("_id")
+        content: str = document["content"]
+        content_length = len(content.encode("utf-8"))
+
+        return {
+            "status": "Success",
+            "data": {
+                "title": document.get("title"),
+                "content_length": content_length,
+                "id": document.get("id"),
+                "view": document.get("view"),
+                "description": document.get("desc"),
+                "cover": document.get("cover")
+            }
+        }
+
+    except Exception as e:
+        return { "status": "Error", "message": str(e) }

@@ -35,7 +35,7 @@ async def wiki_random():
     except Exception as e:
         return { "status": "Error", "message": str(e) }
 
-async def get_article(title: str, field: str | None) -> dict[str, Any] | None:
+async def get_article(title: str, field: str | None):
     """Get article wiki or get its specific field (optional)"""
     try:
         collection = db.get_collection("wiki-articles")
@@ -61,7 +61,7 @@ async def get_article(title: str, field: str | None) -> dict[str, Any] | None:
     except Exception as e:
         return { "status": "Error", "message": str(e) }
 
-async def get_articles_sitemap() -> dict[str, Any]:
+async def get_articles_sitemap():
     """Get all existing articles to generate dynamic url sitemao"""
     try:
         collection = db.get_collection("wiki-articles")
