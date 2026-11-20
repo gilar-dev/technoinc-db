@@ -116,12 +116,14 @@ async def get_article_info(title: str):
         return {
             "status": "Success",
             "data": {
-                "title": document.get("title"),
-                "content_length": content_length,
-                "id": document.get("id"),
-                "view": document.get("view"),
-                "description": document.get("desc"),
-                "cover": document.get("cover")
+                "basic_info": {
+                    "title": document.get("title"),
+                    "content_length": content_length,
+                    "id": document.get("id"),
+                    "view": document.get("view"),
+                    "description": document.get("desc"),
+                    "cover": document.get("cover")
+                }
             }
         }
 
