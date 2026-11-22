@@ -117,34 +117,27 @@ async def get_article_info(title: str) -> ArticleInformationModel | ErrorModel |
 
         # For article page information
         history: list[dict[str, Any]] = json.loads(document["his"])
-        creator = history[0].get("user")
-        creation_date = history[0].get("date")
-        latest_editor = history[-1].get("user")
-        latest_edit_date = history[-1].get("date")
-
-        # For article property
-        categories: list[str] = json.loads(document["cat"])
 
         return ArticleInformationModel(
             status="Success",
             data=ArticleInformationData(
                 basic_info=Basicinfo(
-                    title=str(document["title"]),
+                    title=document["title"],
                     content_length=content_length,
-                    id=int(document["id"]),
-                    view=int(document["view"]),
-                    description=str(document["desc"]),
-                    cover=str(document["cover"])
+                    id=document["id"],
+                    view=document["view"],
+                    description=document["desc"],
+                    cover=document["cover"]
                 ),
                 edit_history=EditHistory(
-                    creator=str(creator),
-                    creation_date=str(creation_date),
-                    latest_editor=str(latest_editor),
-                    latest_edit_date=str(latest_edit_date),
-                    total_edit=int(document["ver"])
+                    creator=history[0]["user"],
+                    creation_date=history[0]["date"],
+                    latest_editor=history[-1]["user"],
+                    latest_edit_date=history[-1]["date"],
+                    total_edit=document["ver"]
                 ),
                 property=Property(
-                    categories=categories
+                    categories=document["cat"]
                 )
             )
         )

@@ -1,15 +1,16 @@
 from pydantic import BaseModel
-from typing import Literal
+from typing import Literal, Any
 
 type Classification = Literal["start", "ga", "fa"]
 type EditPermission = Literal["free", "strict"]
+type ModificationLogs = list[tuple[Literal["add", "move", "delete"], str]]
 
 class RevisionHistory(BaseModel):
     sts: Literal["create", "edit"] # Modification status
     user: str # User / contributor name
     sum: str # Modification summary
     date: str # Modification date
-    m_logs: list[str] # Modification block list
+    m_logs: ModificationLogs # Modification block list
 
 # Article wiki frame model
 class ArticleModel(BaseModel):
@@ -24,7 +25,7 @@ class ArticleModel(BaseModel):
     cat: list[str] # Article category list
     edit: EditPermission # Article edit permission status
     his: list[RevisionHistory] # Article revision history list
-    content: None
+    content: Any
 
 class Basicinfo(BaseModel):
     title: str
