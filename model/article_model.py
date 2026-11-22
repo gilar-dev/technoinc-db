@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import Literal, Any
+from typing import Literal
+from .block_model import Block
 
 type Classification = Literal["start", "ga", "fa"]
 type EditPermission = Literal["free", "strict"]
@@ -25,7 +26,7 @@ class ArticleModel(BaseModel):
     cat: list[str] # Article category list
     edit: EditPermission # Article edit permission status
     his: list[RevisionHistory] # Article revision history list
-    content: Any
+    content: list[Block]
 
 class Basicinfo(BaseModel):
     title: str

@@ -65,4 +65,5 @@ async def update_article_wiki(payload: ArticleModel) -> ReturnData:
         )
     
     except Exception as e:
+        print(e)
         return ReturnData(status="Error", message=str(e))

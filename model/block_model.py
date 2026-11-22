@@ -27,11 +27,11 @@ class GenImage(BaseModel):
 # INFOBOX CONTENT BLOCKS
 class IbStyle(BaseModel):
     type: Literal["ib-style"] = "ib-style"
-    b_col = str
-    h_col = str
-    h_text = str
-    sh_col = str
-    sh_text = str
+    b_col: str
+    h_col: str
+    h_text: str
+    sh_col: str
+    sh_text: str
 
 class IbHeading(BaseModel):
     type: Literal["ib-heading"] = "ib-heading"
