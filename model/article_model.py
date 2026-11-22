@@ -25,3 +25,30 @@ class ArticleModel(BaseModel):
     edit: EditPermission # Article edit permission status
     his: list[RevisionHistory] # Article revision history list
     content: None
+
+class Basicinfo(BaseModel):
+    title: str
+    content_length: int
+    id: int
+    view: int
+    description: str
+    cover: str
+
+class EditHistory(BaseModel):
+    creator: str
+    creation_date: str
+    latest_editor: str
+    latest_edit_date: str
+    total_edit: int
+
+class Property(BaseModel):
+    categories: list[str]
+
+class ArticleInformationData(BaseModel):
+    basic_info: Basicinfo
+    edit_history: EditHistory
+    property: Property
+
+class ArticleInformationModel(BaseModel):
+    status: Literal["Success", "Error"]
+    data: ArticleInformationData

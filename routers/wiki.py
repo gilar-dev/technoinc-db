@@ -1,9 +1,11 @@
-import re
+import re, json
 from fastapi import APIRouter, HTTPException, status
-from typing import Optional, Literal
+from typing import Optional, Literal, Any
 from database import create, read
 from services import wiki
 from configuration import model
+from model.article_model import *
+from model.error_model import ErrorModel
 from configuration.database import db
 
 router = APIRouter(prefix="/api/v1/wiki", tags=["Wiki"])
@@ -101,7 +103,7 @@ async def get_article(title: str, field: Optional[str] = ""):
     return await wiki.get_article(title, field)
 
 @router.get("/{title}/info")
-async def get_article_info(title: str):
+async def get_article_info(title: str) -> ArticleInformationModel | ErrorModel | None:
     try:
         collection = db.get_collection("wiki-articles")
         document = await collection.find_one(
@@ -109,23 +111,46 @@ async def get_article_info(title: str):
         )
         if not document: return
 
-        document.pop("_id")
+        document.pop("_id") # Remove unnecessary property
         content: str = document["content"]
         content_length = len(content.encode("utf-8"))
 
-        return {
-            "status": "Success",
-            "data": {
-                "basic_info": {
-                    "title": document.get("title"),
-                    "content_length": content_length,
-                    "id": document.get("id"),
-                    "view": document.get("view"),
-                    "description": document.get("desc"),
-                    "cover": document.get("cover")
-                }
-            }
-        }
+        # For article page information
+        history: list[dict[str, Any]] = json.loads(document["his"])
+        creator = history[0].get("user")
+        creation_date = history[0].get("date")
+        latest_editor = history[-1].get("user")
+        latest_edit_date = history[-1].get("date")
+
+        # For article property
+        categories: list[str] = json.loads(document["cat"])
+
+        return ArticleInformationModel(
+            status="Success",
+            data=ArticleInformationData(
+                basic_info=Basicinfo(
+                    title=str(document["title"]),
+                    content_length=content_length,
+                    id=int(document["id"]),
+                    view=int(document["view"]),
+                    description=str(document["desc"]),
+                    cover=str(document["cover"])
+                ),
+                edit_history=EditHistory(
+                    creator=str(creator),
+                    creation_date=str(creation_date),
+                    latest_editor=str(latest_editor),
+                    latest_edit_date=str(latest_edit_date),
+                    total_edit=int(document["ver"])
+                ),
+                property=Property(
+                    categories=categories
+                )
+            )
+        )
 
     except Exception as e:
-        return { "status": "Error", "message": str(e) }
+        return ErrorModel(
+            status="Error",
+            message=str(e)
+        )
