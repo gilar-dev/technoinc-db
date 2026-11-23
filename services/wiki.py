@@ -9,7 +9,7 @@ async def wiki_total():
         collection = db.get_collection("wiki-articles")
         document = collection.find(
             { "content": { "$not": { "$regex": "\"type\":\"uni-redirect\"", "$options": "i" }}},
-            { "_id": 0, "title": 1 }
+            { "_id": 0, "id": 1 }
         )
 
         total = await document.to_list()
@@ -17,6 +17,7 @@ async def wiki_total():
         return { "status": "Success", "total_articles": len(total) }
 
     except Exception as e:
+        print(e)
         return { "status": "Error", "message": str(e) }
 
 async def wiki_random():
